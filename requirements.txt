@@ -1,0 +1,7 @@
+langchain_community
+langchain_text_splitters
+transformers
+sentence-transformers
+chromadb
+langchain_ollama
+langfuse

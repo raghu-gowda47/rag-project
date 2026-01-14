@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches and DBs
+chroma_db/
+chroma_db_bpe/
+*.sqlite3
+
+# VSCode
+.vscode/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db

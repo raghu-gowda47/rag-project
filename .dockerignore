@@ -1,0 +1,13 @@
+.git
+.gitignore
+.vscode
+.idea
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.DS_Store
+rag_chatbot.log
+.env
+.venv
+venv

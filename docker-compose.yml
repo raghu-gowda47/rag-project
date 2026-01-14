@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  rag-chatbot:
+    build: .
+    container_name: rag-chatbot
+    volumes:
+      - ./chroma_db_bpe:/app/chroma_db_bpe
+      - ./rag_chatbot.log:/app/rag_chatbot.log
+    environment:
+      - OLLAMA_HOST=host.docker.internal:11434
+    stdin_open: true
+    tty: true
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge

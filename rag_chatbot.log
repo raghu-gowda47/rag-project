@@ -1,0 +1,145 @@
+2026-01-14 12:32:55,460 - __main__ - INFO - ==================================================
+2026-01-14 12:32:55,461 - __main__ - INFO - RAG Chatbot Initialization Started
+2026-01-14 12:32:55,461 - __main__ - INFO - ==================================================
+2026-01-14 12:32:55,461 - __main__ - INFO - PDF path: c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 12:32:55,461 - __main__ - INFO - Vector store path: c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 12:32:55,462 - __main__ - INFO - Step 1: Loading PDF documents
+2026-01-14 12:32:55,462 - data_loader - INFO - Loading PDF from c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 12:33:03,740 - data_loader - INFO - Successfully loaded 1960 pages from PDF
+2026-01-14 12:33:03,740 - __main__ - INFO - Step 2: Splitting documents into chunks
+2026-01-14 12:33:05,311 - text_splitter - INFO - Splitting 1960 documents into chunks (size=500, overlap=100)
+2026-01-14 12:33:05,748 - text_splitter - INFO - Created 2051 chunks from 1960 documents
+2026-01-14 12:33:05,752 - __main__ - INFO - Step 3: Creating vector store with embeddings
+2026-01-14 12:33:05,753 - vectorstore - INFO - Initializing embedding model (all-MiniLM-L6-v2)
+2026-01-14 12:33:06,317 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-01-14 12:33:06,317 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2026-01-14 12:33:13,085 - vectorstore - INFO - Creating ChromaDB vector store at c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 12:33:13,702 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-14 12:34:22,024 - vectorstore - INFO - Vector store created with 2051 embedded documents
+2026-01-14 12:34:22,025 - __main__ - INFO - Step 4: Building RAG chain
+2026-01-14 12:34:22,025 - rag_chain - INFO - Building RAG chain components
+2026-01-14 12:34:22,026 - rag_chain - INFO - Initializing Ollama LLM (Gemma3)
+2026-01-14 12:34:22,574 - rag_chain - INFO - Constructing LCEL chain
+2026-01-14 12:34:22,575 - rag_chain - INFO - RAG chain successfully constructed
+2026-01-14 12:34:22,575 - __main__ - INFO - ==================================================
+2026-01-14 12:34:22,576 - __main__ - INFO - RAG Chatbot Ready for Queries
+2026-01-14 12:34:22,576 - __main__ - INFO - ==================================================
+2026-01-14 12:34:38,272 - __main__ - INFO - Query #1: who are the main characters of ramayana
+2026-01-14 12:36:45,003 - httpx - INFO - HTTP Request: POST http://127.0.0.1:11434/api/generate "HTTP/1.1 200 OK"
+2026-01-14 12:36:46,756 - __main__ - INFO - Response generated for query #1
+2026-01-14 12:55:31,768 - __main__ - INFO - Query #2: & "C:/Users/raghu/My Code/Rag Project/.venv/Scripts/python.exe" "c:/Users/raghu/My Code/Rag Project/src/main.py"
+2026-01-14 12:58:24,816 - httpx - INFO - HTTP Request: POST http://127.0.0.1:11434/api/generate "HTTP/1.1 200 OK"
+2026-01-14 12:58:25,986 - __main__ - INFO - Response generated for query #2
+2026-01-14 12:58:40,314 - __main__ - INFO - User exited chatbot
+2026-01-14 12:59:08,722 - __main__ - INFO - ==================================================
+2026-01-14 12:59:08,722 - __main__ - INFO - RAG Chatbot Initialization Started
+2026-01-14 12:59:08,723 - __main__ - INFO - ==================================================
+2026-01-14 12:59:08,723 - __main__ - INFO - Initializing Langfuse observability...
+2026-01-14 12:59:08,724 - observability - WARNING - Langfuse not installed. Install with: pip install langfuse. Observability will be disabled.
+2026-01-14 12:59:08,784 - __main__ - INFO - PDF path: c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 12:59:08,784 - __main__ - INFO - Vector store path: c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 12:59:08,785 - __main__ - INFO - Step 1: Loading PDF documents
+2026-01-14 12:59:08,785 - data_loader - INFO - Loading PDF from c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 12:59:28,105 - data_loader - INFO - Successfully loaded 1960 pages from PDF
+2026-01-14 12:59:28,106 - observability - INFO - [TRACE END] load_pdf completed in 19.32s
+2026-01-14 12:59:28,106 - __main__ - INFO - Step 2: Splitting documents into chunks
+2026-01-14 12:59:29,572 - text_splitter - INFO - Splitting 1960 documents into chunks (size=500, overlap=100)
+2026-01-14 12:59:30,877 - text_splitter - INFO - Created 2051 chunks from 1960 documents
+2026-01-14 12:59:30,884 - observability - INFO - [TRACE END] split_documents completed in 2.78s
+2026-01-14 12:59:30,885 - __main__ - INFO - Step 3: Creating vector store with embeddings
+2026-01-14 12:59:30,885 - vectorstore - INFO - Initializing embedding model (all-MiniLM-L6-v2)
+2026-01-14 12:59:31,703 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-01-14 12:59:31,703 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2026-01-14 12:59:38,810 - vectorstore - INFO - Creating ChromaDB vector store at c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 12:59:39,720 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-14 13:01:32,194 - vectorstore - INFO - Vector store created with 2051 embedded documents
+2026-01-14 13:01:32,194 - observability - INFO - [TRACE END] create_vectorstore completed in 121.31s
+2026-01-14 13:01:32,195 - __main__ - INFO - Step 4: Building RAG chain
+2026-01-14 13:01:32,195 - rag_chain - INFO - Building RAG chain components
+2026-01-14 13:01:32,196 - rag_chain - INFO - Initializing Ollama LLM (Gemma3)
+2026-01-14 13:01:33,111 - rag_chain - INFO - Constructing LCEL chain
+2026-01-14 13:01:33,112 - rag_chain - INFO - RAG chain successfully constructed
+2026-01-14 13:01:33,112 - observability - INFO - [TRACE END] build_rag_chain completed in 0.92s
+2026-01-14 13:01:33,112 - __main__ - INFO - ==================================================
+2026-01-14 13:01:33,112 - __main__ - INFO - RAG Chatbot Ready for Queries
+2026-01-14 13:01:33,113 - __main__ - INFO - ==================================================
+2026-01-14 13:06:50,970 - __main__ - INFO - User exited chatbot
+2026-01-14 13:06:50,975 - observability - INFO - [TRACE END] initialize_rag_pipeline completed in 462.25s
+2026-01-14 13:08:11,743 - __main__ - INFO - ==================================================
+2026-01-14 13:08:11,743 - __main__ - INFO - RAG Chatbot Initialization Started
+2026-01-14 13:08:11,744 - __main__ - INFO - ==================================================
+2026-01-14 13:08:11,744 - __main__ - INFO - Initializing Langfuse observability...
+2026-01-14 13:08:11,744 - observability - WARNING - Langfuse not installed. Install with: pip install langfuse. Observability will be disabled.
+2026-01-14 13:08:11,846 - __main__ - INFO - PDF path: c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 13:08:11,846 - __main__ - INFO - Vector store path: c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 13:08:11,846 - __main__ - INFO - Step 1: Loading PDF documents
+2026-01-14 13:08:11,847 - data_loader - INFO - Loading PDF from c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 13:08:13,033 - data_loader - INFO - Successfully loaded 204 pages from PDF
+2026-01-14 13:08:13,033 - observability - INFO - [TRACE END] load_pdf completed in 1.19s
+2026-01-14 13:08:13,034 - __main__ - INFO - Step 2: Splitting documents into chunks
+2026-01-14 13:08:14,218 - text_splitter - INFO - Splitting 204 documents into chunks (size=500, overlap=100)
+2026-01-14 13:08:14,834 - text_splitter - INFO - Created 608 chunks from 204 documents
+2026-01-14 13:08:14,838 - observability - INFO - [TRACE END] split_documents completed in 1.80s
+2026-01-14 13:08:14,839 - __main__ - INFO - Step 3: Creating vector store with embeddings
+2026-01-14 13:08:14,839 - vectorstore - INFO - Initializing embedding model (all-MiniLM-L6-v2)
+2026-01-14 13:08:15,100 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-01-14 13:08:15,100 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2026-01-14 13:08:20,252 - vectorstore - INFO - Creating ChromaDB vector store at c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 13:08:21,632 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-14 13:08:43,100 - vectorstore - INFO - Vector store created with 608 embedded documents
+2026-01-14 13:08:43,100 - observability - INFO - [TRACE END] create_vectorstore completed in 28.26s
+2026-01-14 13:08:43,100 - __main__ - INFO - Step 4: Building RAG chain
+2026-01-14 13:08:43,101 - rag_chain - INFO - Building RAG chain components
+2026-01-14 13:08:43,101 - rag_chain - INFO - Initializing Ollama LLM (Gemma3)
+2026-01-14 13:08:43,682 - rag_chain - INFO - Constructing LCEL chain
+2026-01-14 13:08:43,683 - rag_chain - INFO - RAG chain successfully constructed
+2026-01-14 13:08:43,683 - observability - INFO - [TRACE END] build_rag_chain completed in 0.58s
+2026-01-14 13:08:43,683 - __main__ - INFO - ==================================================
+2026-01-14 13:08:43,683 - __main__ - INFO - RAG Chatbot Ready for Queries
+2026-01-14 13:08:43,684 - __main__ - INFO - ==================================================
+2026-01-14 13:09:43,306 - __main__ - INFO - Query #1: who is rama
+2026-01-14 13:11:51,313 - httpx - INFO - HTTP Request: POST http://127.0.0.1:11434/api/generate "HTTP/1.1 200 OK"
+2026-01-14 13:11:56,333 - __main__ - INFO - Response generated for query #1
+2026-01-14 13:11:56,334 - observability - INFO - [CONTEXT END] query_1 completed in 133.03s
+2026-01-14 13:23:21,230 - __main__ - INFO - User exited chatbot
+2026-01-14 13:23:21,236 - observability - INFO - [TRACE END] initialize_rag_pipeline completed in 909.49s
+2026-01-14 13:24:46,642 - __main__ - INFO - ==================================================
+2026-01-14 13:24:46,642 - __main__ - INFO - RAG Chatbot Initialization Started
+2026-01-14 13:24:46,642 - __main__ - INFO - ==================================================
+2026-01-14 13:24:46,642 - __main__ - INFO - Initializing Langfuse observability...
+2026-01-14 13:24:46,642 - observability - WARNING - Langfuse not installed. Install with: pip install langfuse. Observability will be disabled.
+2026-01-14 13:24:46,647 - __main__ - INFO - PDF path: c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 13:24:46,647 - __main__ - INFO - Vector store path: c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 13:24:46,648 - __main__ - INFO - PDF is new or has been modified - rebuilding vector database
+2026-01-14 13:24:46,648 - __main__ - INFO - Deleting outdated vector database
+2026-01-14 13:24:46,652 - __main__ - INFO - Step 1: Loading PDF documents
+2026-01-14 13:24:46,652 - data_loader - INFO - Loading PDF from c:\Users\raghu\My Code\Rag Project\Ramayana.pdf
+2026-01-14 13:24:47,795 - data_loader - INFO - Successfully loaded 204 pages from PDF
+2026-01-14 13:24:47,795 - observability - INFO - [TRACE END] load_pdf completed in 1.14s
+2026-01-14 13:24:47,796 - __main__ - INFO - Step 2: Splitting documents into chunks
+2026-01-14 13:24:48,972 - text_splitter - INFO - Splitting 204 documents into chunks (size=500, overlap=100)
+2026-01-14 13:24:49,331 - text_splitter - INFO - Created 608 chunks from 204 documents
+2026-01-14 13:24:49,336 - observability - INFO - [TRACE END] split_documents completed in 1.54s
+2026-01-14 13:24:49,337 - __main__ - INFO - Step 3: Creating vector store with embeddings
+2026-01-14 13:24:49,337 - vectorstore - INFO - Initializing embedding model (all-MiniLM-L6-v2)
+2026-01-14 13:24:49,640 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-01-14 13:24:49,641 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2026-01-14 13:24:55,276 - vectorstore - INFO - Creating ChromaDB vector store at c:\Users\raghu\My Code\Rag Project\chroma_db_bpe
+2026-01-14 13:24:55,701 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-01-14 13:25:13,502 - vectorstore - INFO - Vector store created with 608 embedded documents
+2026-01-14 13:25:13,503 - observability - INFO - [TRACE END] create_vectorstore completed in 24.17s
+2026-01-14 13:25:13,503 - data_loader - INFO - PDF checkpoint updated (mtime: 1768376154.277484)
+2026-01-14 13:25:13,504 - __main__ - INFO - Step 4: Building RAG chain
+2026-01-14 13:25:13,504 - rag_chain - INFO - Building RAG chain components
+2026-01-14 13:25:13,504 - rag_chain - INFO - Initializing Ollama LLM (Gemma3)
+2026-01-14 13:25:14,243 - rag_chain - INFO - Constructing LCEL chain
+2026-01-14 13:25:14,243 - rag_chain - INFO - RAG chain successfully constructed
+2026-01-14 13:25:14,244 - observability - INFO - [TRACE END] build_rag_chain completed in 0.74s
+2026-01-14 13:25:14,244 - __main__ - INFO - ==================================================
+2026-01-14 13:25:14,244 - __main__ - INFO - RAG Chatbot Ready for Queries
+2026-01-14 13:25:14,244 - __main__ - INFO - ==================================================
+2026-01-14 13:25:42,349 - __main__ - INFO - Query #1: summarize this in 100 words
+2026-01-14 13:27:23,514 - __main__ - INFO - Response generated for query #1
+2026-01-14 13:27:23,514 - observability - INFO - [CONTEXT END] query_1 completed in 101.16s
+2026-01-14 13:33:51,746 - __main__ - INFO - User exited chatbot
+2026-01-14 13:33:51,749 - observability - INFO - [TRACE END] initialize_rag_pipeline completed in 545.11s
