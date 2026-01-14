@@ -2,6 +2,14 @@ import os
 import logging
 import sys
 import shutil
+from config import (
+    PDF_PATH,
+    VECTOR_DB_PATH,
+    LOG_FILE_PATH,
+    CHECKPOINT_FILE_PATH,
+    LOGGING_CONFIG,
+    EXTERNAL_LOGGER_LEVELS,
+)
 from data_loader import load_pdf, has_pdf_changed, update_pdf_checkpoint
 from text_splitter import split_documents
 from vectorstore import create_vectorstore
@@ -14,17 +22,16 @@ def setup_logging(level=logging.INFO):
     """Configure logging for the application."""
     logging.basicConfig(
         level=level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        format=LOGGING_CONFIG["format"],
         handlers=[
             logging.StreamHandler(sys.stdout),
-            logging.FileHandler('rag_chatbot.log')
+            logging.FileHandler(str(LOG_FILE_PATH))
         ]
     )
     
     # Suppress verbose logs from external libraries
-    logging.getLogger('httpx').setLevel(logging.WARNING)
-    logging.getLogger('urllib3').setLevel(logging.WARNING)
-    logging.getLogger('langchain').setLevel(logging.WARNING)
+    for logger_name, logger_level in EXTERNAL_LOGGER_LEVELS.items():
+        logging.getLogger(logger_name).setLevel(getattr(logging, logger_level))
 
 
 logger = logging.getLogger(__name__)
@@ -46,15 +53,16 @@ def main():
         else:
             logger.info("⚠ Langfuse observability disabled (will continue without it)")
         
-        # Paths
-        pdf_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Ramayana.pdf")
-        persist_directory = os.path.join(os.path.dirname(os.path.dirname(__file__)), "chroma_db_bpe")
+        # Use configured paths
+        pdf_path = str(PDF_PATH)
+        persist_directory = str(VECTOR_DB_PATH)
+        checkpoint_file = str(CHECKPOINT_FILE_PATH)
         
         logger.info(f"PDF path: {pdf_path}")
         logger.info(f"Vector store path: {persist_directory}")
         
         # Check if PDF has changed since last run
-        if has_pdf_changed(pdf_path):
+        if has_pdf_changed(pdf_path, checkpoint_file):
             logger.info("PDF is new or has been modified - rebuilding vector database")
             if os.path.exists(persist_directory):
                 logger.info("Deleting outdated vector database")
@@ -73,7 +81,7 @@ def main():
         vectorstore = create_vectorstore(splits, persist_directory)
         
         # Update checkpoint to indicate PDF was processed
-        update_pdf_checkpoint(pdf_path)
+        update_pdf_checkpoint(pdf_path, checkpoint_file)
         
         logger.info("Step 4: Building RAG chain")
         rag_chain = build_rag_chain(vectorstore)

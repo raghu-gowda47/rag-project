@@ -7,6 +7,9 @@ __pycache__/
 chroma_db/
 chroma_db_bpe/
 *.sqlite3
+data/vector_db/
+data/logs/
+data/.pdf_checkpoint
 
 # VSCode
 .vscode/
