@@ -1,6 +1,6 @@
 # RAG Project: Chat With Your Docs
 
-A conversational AI system that answers questions about document content using Retrieval-Augmented Generation (RAG). Ask questions about your PDFs and get context-aware answers powered by local LLMs.
+A conversational AI system that answers questions about document content using Retrieval-Augmented Generation (RAG). Ask questions about your PDFs and get context-aware answers powered by local LLMs(Can be upgraded to cloud based LLM's)
 
 ## Quick Setup Instructions
 
@@ -28,7 +28,12 @@ A conversational AI system that answers questions about document content using R
    pip install -r requirements.txt
    ```
 
-4. Place your PDF in the project root (e.g., `Ramayana.pdf`)
+4. Place your PDF in the data directory:
+   ```bash
+   mkdir -p data/documents
+   cp your_pdf.pdf data/documents/Ramayana.pdf
+   ```
+   The system auto-creates `data/vector_db/` and `data/logs/` directories on first run.
 
 5. Run the chatbot:
    ```bash
@@ -98,12 +103,15 @@ The system follows a standard RAG pipeline with clear separation of concerns:
 
 ### Component Breakdown
 
-- **data_loader.py**: Loads PDF documents and extracts text
+- **data_loader.py**: PDF loading with automatic change detection via checkpoint tracking
 - **text_splitter.py**: Chunks text using BPE tokenization for optimal LLM consumption
-- **vectorstore.py**: Manages embeddings and vector database operations
+- **vectorstore.py**: Manages embeddings and ChromaDB vector operations
 - **rag_chain.py**: Orchestrates the retrieval and generation pipeline
 - **prompts.py**: Centralized prompt management with safety guardrails
-- **main.py**: CLI interface for interactive Q&A
+- **main.py**: CLI interface with Langfuse tracing and logging
+- **config.py**: Centralized configuration (paths, LLM settings, logging levels)
+- **observability.py**: Langfuse integration with @trace_function decorators and context managers
+- **__init__.py**: Package initialization and API exports
 
 ## Productionization & Scalability
 
@@ -112,7 +120,7 @@ The system follows a standard RAG pipeline with clear separation of concerns:
 - Deploy LLM via managed service (SageMaker, Vertex AI, Azure OpenAI).
 - Add API layer (FastAPI, Flask) for serving.
 - Use cloud storage for documents.
-- Implement monitoring, logging, and autoscaling.
+- Observability (Langfuse) provides monitoring, logging, and performance tracking for production systems.
 
 ## RAG/LLM Approach & Decisions
 
@@ -122,7 +130,6 @@ The system follows a standard RAG pipeline with clear separation of concerns:
 **Alternatives Considered:**
 - OpenAI GPT-4: Better quality but cloud dependency, higher costs
 - Anthropic Claude: Excellent reasoning but overkill for retrieval tasks
-- Llama2: Good, but Gemma3 had better instruction-following in testing
 
 **Trade-off:** Local inference is slower but acceptable for this use case; can swap to cloud LLM by changing 2 lines of code.
 
@@ -150,7 +157,6 @@ The system follows a standard RAG pipeline with clear separation of concerns:
 **Why:** Modular components, minimal boilerplate, great for rapid prototyping. The piping syntax (`|`) is elegant and composable.
 
 **Alternatives Considered:**
-- LlamaIndex: More opinionated about RAG, heavier dependencies
 - Langsmith: Overkill for this scope
 - Custom implementation: Too much reinvention
 
@@ -162,8 +168,6 @@ The system follows a standard RAG pipeline with clear separation of concerns:
 **Parameters:**
 - `chunk_size=500`: Fits ~2000 tokens in Gemma3's context window with room for system prompt
 - `chunk_overlap=100`: Ensures context continuity across chunk boundaries, prevents losing important relationships
-
-**Reasoning:** Empirically tested on Ramayana—500 tokens captures coherent passages without excessive redundancy.
 
 ### Retrieval Strategy: Top-k=4
 **Why:** 4 chunks (~2000 tokens total) provides enough context without diluting relevance or overwhelming the LLM.
@@ -208,18 +212,27 @@ You are a helpful assistant answering questions based on provided context.
 
 ### Quality & Observability
 
-**Current Approach:**
-- Print statements for debugging
-- PDF page count validation
-- Chunk count visibility
+**Current Implementation:**
+- ✅ Structured logging with Python `logging` module (main.py, all modules)
+- ✅ Langfuse integration for tracing all function calls with @trace_function decorator
+- ✅ Latency monitoring via Langfuse traces (automatic timing of all operations)
+- ✅ Error tracking via Langfuse and logging with try-catch blocks
+- ✅ PDF change detection with checkpoint tracking
+- ✅ External library log filtering (httpx, urllib3, langchain)
+- ✅ Query context tracking with metadata (Langfuse trace_context)
 
-**Gaps:**
-- No structured logging (should use `logging` module)
-- No metrics on retrieval quality (recall, precision)
-- No latency monitoring
-- No error tracking
+**Langfuse Provides:**
+- Distributed tracing across the entire RAG pipeline
+- Latency metrics for each step (retrieval, LLM generation, etc.)
+- Error and exception tracking
+- Custom metrics via trace annotations
+- Analytics dashboard for monitoring production
 
-**Why minimal now:** Keeping prototype simple. Production would need these.
+**Future Enhancements:**
+- Retrieval quality metrics (recall, precision, NDCG)
+- Custom scoring and feedback collection
+- A/B testing different prompt variations
+- User behavior analytics
 
 ## Key Technical Decisions & Reasoning
 
@@ -241,8 +254,6 @@ You are a helpful assistant answering questions based on provided context.
 - Token boundaries matter to LLMs—splitting mid-token wastes context
 - BPE aligns input structure to how model processes text
 - More reliable chunking across languages
-
-**Evidence:** Tested on Ramayana; character splitting created incoherent chunks at boundaries.
 
 ### 3. Local First, Cloud-Ready Architecture
 **Decision:** Used local Ollama + ChromaDB + HuggingFace embeddings, but with replaceable imports.
@@ -288,48 +299,33 @@ You are a helpful assistant answering questions based on provided context.
 ✅ **Dependency injection** - Functions take dependencies as arguments  
 ✅ **Requirements.txt** - Clear dependency management  
 ✅ **Separated concerns** - Data, embedding, chain logic are distinct  
-✅ **Configuration externalization** - Hardcoded values in functions (can be moved to config file)
+✅ **Structured logging** - Python logging module with file and console output
+✅ **Observability** - Langfuse integration with decorators and context managers
+✅ **Config file** - Centralized src/config.py for all settings
+✅ **PDF change detection** - Automatic vector DB rebuilding when PDF changes
+✅ **Package structure** - Proper __init__.py for Python package
+✅ **Error handling** - Comprehensive try-catch with logging
 
-### Deliberately Skipped:
-❌ **Type hints** - Would add verbosity; Python's duck typing works here  
-❌ **Unit tests** - Added complexity; manual testing was sufficient for MVP  
-❌ **Logging framework** - `print()` works for prototyping; would add `logging` module in production  
-❌ **Config file** - Hardcoded values are fine for single-document setup  
-❌ **API/Web UI** - CLI is sufficient for assessment; would add FastAPI for production  
+### Deliberately Kept Simple (For MVP):
+❌ **Type hints** - Would add verbosity; not critical for prototype
+❌ **Unit tests** - Manual testing sufficient for single-document setup
+❌ **REST API** - CLI is functional; can add FastAPI for production
+❌ **Web UI** - Can add Streamlit when needed
 ❌ **CI/CD pipeline** - Not needed for single-developer project  
 
-**Philosophy:** Start simple, add complexity when justified by requirements.
+
 
 ## Use of AI Tools in Development
 
-### GitHub Copilot
-**What it was good for:**
-- Boilerplate code (imports, function signatures)
-- Repetitive patterns (similar functions with variations)
-- LangChain API suggestions (knows the syntax better than I do)
+**My approach:** Accept Copilot(chat GPT/Claude) suggestions, ask the co-pilot to generate the code with suitable prompts, validate if its achieving the results desired, optmise the soultion, repeat if needed.
 
-**What I had to fix:**
-- Overly verbose docstrings ("This function loads a PDF..." → just the code)
-- Generic variable names (`result`, `data`) → renamed to `splits`, `vectorstore`
-- Comment quality ("Extract the last digit" → just let code speak)
-
-**My approach:** Accept Copilot suggestions, then edit ruthlessly. No LLM-generated prose in final code.
-
-### ChatGPT/Claude
-**Used for:**
-- Understanding LangChain's LCEL syntax (piping operator `|`)
-- Explaining embedding dimensions and why MiniLM's 384-d works
-- Brainstorming chunking strategies (token-based vs. semantic)
-
-**How I validated:** Tested recommendations on actual Ramayana data before committing.
 
 ### What I Won't Use AI For:
-- README documentation (must be my voice)
 - Decision rationale (these need my actual thinking)
-- Architectural choices (requires tradeoff analysis)
+- Architectural choices (requires tradeoff analysis, what is best suited for project)
 - Testing & edge cases (need domain knowledge)
 
-**Principle:** Use AI for acceleration, not delegation. I should be able to explain every decision.
+**Principle:** Use AI for acceleration, not delegation. I should be able to explain every decision and provide the sign off.
 
 ## Productionization & Scalability for Cloud (AWS/GCP/Azure)
 
@@ -340,204 +336,11 @@ You are a helpful assistant answering questions based on provided context.
 - No authentication
 - Single-threaded processing
 
-### AWS Deployment Architecture
-
-```
-┌────────────────┐
-│  S3 (Docs)     │
-└────────┬───────┘
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  Lambda (Doc Processing)            │
-│  - Trigger: S3 upload               │
-│  - Split & embed documents          │
-│  - Store in RDS (metadata)          │
-└─────────┬───────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────┐
-│  RDS PostgreSQL (Vector Storage)    │
-│  - pgvector extension for embedding │
-│  - Horizontal scaling via Aurora    │
-└─────────┬───────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────┐
-│  API Gateway + Lambda (Query Handler)│
-│  - REST endpoint                    │
-│  - Auth via API Gateway + Cognito   │
-│  - Retrieve + Generate              │
-└─────────┬───────────────────────────┘
-          │
-          ▼
-┌──────────────────────────────────────┐
-│  SageMaker Endpoint (LLM)            │
-│  - Llama2/Mistral (or bring your own)│
-│  - Auto-scaling based on load       │
-└──────────────────────────────────────┘
-```
-
-### GCP Alternative
-
-```
-Cloud Storage (PDFs) 
-  ▼
-Cloud Functions (Chunking/Embedding)
-  ▼
-Vertex AI Vector Search (Replacement for ChromaDB)
-  ▼
-Cloud Run (API + Query Handler)
-  ▼
-Vertex AI LLM APIs (Or custom model)
-```
-
-### Azure Alternative
-
-```
-Blob Storage (PDFs)
-  ▼
-Azure Functions (Processing)
-  ▼
-Azure Cognitive Search (Vector Search)
-  ▼
-App Service / ACI (API)
-  ▼
-Azure OpenAI or MLflow deployment
-```
-
-### Key Changes for Production
-
-**1. Storage**
-```python
-# Current
-docs = load_pdf("local_path.pdf")
-
-# Production
-from google.cloud import storage
-bucket = storage.Client().bucket("my-docs")
-blob = bucket.blob("Ramayana.pdf")
-docs = load_from_stream(blob.download_as_bytes())
-```
-
-**2. Vector Store**
-```python
-# Current
-vectorstore = Chroma(...)
-
-# Production (AWS)
-from langchain_community.vectorstores import RDS
-vectorstore = RDS.from_documents(..., connection=rds_connection)
-
-# Or cloud-native
-from langchain_community.vectorstores import VertexAIVectorSearch
-```
-
-**3. LLM**
-```python
-# Current
-llm = OllamaLLM(model="gemma3")
-
-# Production (AWS)
-from langchain_community.llms.bedrock import Bedrock
-llm = Bedrock(model_id="anthropic.claude-3-sonnet")
-
-# Or managed endpoint
-from langchain_community.llms.sagemaker_endpoint import SagemakerEndpoint
-```
-
-**4. Logging & Monitoring**
-```python
-import logging
-from aws_lambda_logging import setup
-import watchtower
-
-setup(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-logger.addHandler(watchtower.CloudWatchLogHandler())
-```
-
-**5. API Layer**
-```python
-from fastapi import FastAPI
-from mangum import Mangum  # ASGI adapter for Lambda
-
-app = FastAPI()
-
-@app.post("/query")
-async def query(question: str, doc_id: str):
-    result = rag_chain.invoke(question)
-    return {"answer": result}
-
-handler = Mangum(app)  # AWS Lambda handler
-```
-
-**6. Multi-tenancy**
-```python
-# Current: Single document
-vectorstore = Chroma(persist_directory="./db")
-
-# Production: Per-user/org isolation
-vectorstore = Chroma(
-    persist_directory=f"./db/{org_id}/",
-    client_id=user_id  # Tenant isolation
-)
-```
-
-### Cost Estimates (AWS Monthly)
-
-| Component | Current | Production |
-|-----------|---------|-----------|
-| Lambda (doc processing) | Free | $20-50 |
-| RDS (vector DB) | - | $200-500 |
-| Bedrock LLM | - | $0.001/input token, $0.003/output token |
-| CloudWatch Logs | Free | $50-100 |
-| **Total** | **Free** | **$300-1000** |
-
-### Scalability Checklist
-
-- [ ] Use managed vector DB (RDS with pgvector or Vertex AI Vector Search)
-- [ ] Implement connection pooling for DB access
-- [ ] Add caching layer (Redis/ElastiCache)
-- [ ] Rate limiting on API endpoints
-- [ ] Request queuing (SQS/Pub-Sub) for async processing
-- [ ] Monitoring & alerting (CloudWatch/Stackdriver)
-- [ ] Auto-scaling policies for Lambda/App Service
-- [ ] Cost optimization (reserved instances, spot instances)
-
-## Edge Cases & Limitations
-
-### Known Issues
-1. **Large PDFs**: Memory usage grows linearly with document size. Chunking helps but not a permanent solution.
-2. **Slow Inference**: Local Ollama is ~2-5x slower than cloud LLMs. Acceptable for demo, not for production.
-3. **Fixed k=4 Retrieval**: Optimal k varies by document; future work could make this adaptive.
-4. **No context awareness between queries**: Each question is independent; no conversation history.
-5. **No document updates**: Vector store is immutable once created. Updating requires full re-indexing.
-
 ### What I'd Do Differently With More Time
 
-**Short-term (1-2 weeks):**
-- [ ] Add logging module (structured logs, metrics)
+**Short-term (Still Pending):**
 - [ ] Implement FastAPI endpoint for HTTP queries
 - [ ] Unit tests for each module (pytest)
-- [ ] Docker containerization
-- [ ] Query validation and error handling
+- [ ] Web UI (Streamlit demo)
+- [ ] Query validation and error handling improvements
 - [ ] Prompt version management (A/B testing)
-
-**Medium-term (1 month):**
-- [ ] Multi-document support with document metadata
-- [ ] Conversation history (context across queries)
-- [ ] Web UI (React/Streamlit for demo)
-- [ ] Retrieval evaluation metrics (NDCG, MRR)
-- [ ] Query re-ranking using cross-encoder
-- [ ] Implement HyDE (Hypothetical Document Embeddings) for better retrieval
-
-**Long-term (Production):**
-- [ ] Deploy to AWS with CI/CD pipeline
-- [ ] Managed vector DB (RDS pgvector or Pinecone)
-- [ ] Multi-tenancy support
-- [ ] Document versioning and update mechanism
-- [ ] Usage tracking and cost optimization
-- [ ] Advanced guardrails (content filtering, PII detection)
-- [ ] Fine-tune embedding model on domain-specific data
-- [ ] Implement RAG variants (RAPTOR, Self-RAG for better quality)
